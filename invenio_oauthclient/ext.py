@@ -65,10 +65,14 @@ class _OAuthClientState(object):
             remote.tokengetter(make_token_getter(remote))
 
             # Register authorized handler
-            self.handlers[remote_app] = remote.authorized_handler(make_handler(
-                conf.get('authorized_handler', authorized_default_handler),
-                remote,
-            ))
+            data = remote.authorized_response()
+            self.handlers[remote_app] = make_handler(
+                *(data,) + (conf.get('authorized_handler', authorized_default_handler), remote)
+            )
+            # self.handlers[remote_app] = remote.authorized_handler(make_handler(
+            #     conf.get('authorized_handler', authorized_default_handler),
+            #     remote,
+            # ))
 
             # Register disconnect handler
             self.disconnect_handlers[remote_app] = make_handler(
